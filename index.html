@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Analyse des Marchés et Gestion des Risques</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Analyse des Marchés et Gestion des Risques</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Qu'est-ce qu'un actif financier ?", choices: ["Un bien physique possédé par une entreprise", "Une ressource tangible utilisée dans l'exploitation", "Un titre ou une valeur monétaire détenue", "Une dette à long terme"], correct: 2 },
+        { question: "Qu'est-ce qu'un hedge fund ?", choices: ["Un fonds d'investissement risqué soumis à des réglementations strictes", "Un fonds d'investissement alternatif plus flexible que les fonds traditionnels", "Un fonds de pension pour les retraités", "Un fonds public destiné à la couverture des risques nationaux"], correct: 1 },
+        { question: "Exemple : Joséphine décide d'investir dans un hedge fund. Quel type d'investissement peut-elle s'attendre à effectuer ?", choices: ["Des investissements prudents avec peu de risques", "Des investissements à haut risque avec des rendements potentiels élevés", "Des investissements uniquement en actions", "Des investissements exclusivement sur les marchés publics"], correct: 1 },
+        { question: "Quelle est la différence entre un risque systématique et un risque spécifique ?", choices: ["Le risque systématique affecte tous les marchés, le spécifique est lié à un seul titre", "Le risque spécifique affecte tous les marchés", "Le risque systématique peut être éliminé par diversification", "Le risque spécifique est lié à des facteurs économiques mondiaux"], correct: 0 },
+        { question: "Exemple : Dorian investit dans une seule entreprise technologique. De quel type de risque est-il principalement exposé ?", choices: ["Systématique", "Spécifique", "Influentiel", "Universel"], correct: 1 },
+        { question: "Qu'est-ce que la théorie du portefeuille de Markowitz cherche à optimiser ?", choices: ["La réduction des coûts fixes", "La maximisation du rendement pour un niveau de risque donné", "La maximisation des dividendes", "La réduction des pertes fiscales"], correct: 1 },
+        { question: "Qu'est-ce qu'un marché efficient selon la théorie des marchés efficients ?", choices: ["Un marché où tous les investisseurs possèdent les mêmes informations", "Un marché où les prix des actifs reflètent toutes les informations disponibles", "Un marché qui génère les mêmes rendements pour tous les investisseurs", "Un marché où les investisseurs peuvent influencer directement les prix"], correct: 1 },
+        { question: "Exemple : Joséphine observe que les prix des actions réagissent immédiatement à la publication des résultats financiers. Ce phénomène confirme-t-il l'hypothèse des marchés efficients ?", choices: ["Oui, les informations sont rapidement intégrées dans les prix", "Non, les investisseurs doivent attendre que le marché réagisse", "Non, les prix sont influencés par des forces externes", "Oui, mais seulement dans le cadre d'un marché primaire"], correct: 0 },
+        { question: "Quel est le rôle d'un banquier d'investissement ?", choices: ["Accorder des crédits immobiliers", "Conseiller les entreprises lors de fusions, acquisitions et introductions en bourse", "Réaliser des transactions sur le marché interbancaire", "Gérer les fonds de pension"], correct: 1 },
+        { question: "Exemple : Dorian est consultant en finance d'entreprise. Lorsqu'il aide une société à lever des fonds via une introduction en bourse, quel rôle joue-t-il ?", choices: ["Banquier d'investissement", "Conseiller en patrimoine", "Trader en salle de marché", "Analyste financier"], correct: 0 },
+        { question: "Qu'est-ce qu'un taux d'intérêt réel ?", choices: ["Un taux d'intérêt avant inflation", "Un taux d'intérêt ajusté pour l'inflation", "Un taux qui inclut les frais bancaires", "Un taux qui varie avec les fluctuations du marché"], correct: 1 },
+        { question: "Exemple : Si Joséphine emprunte 1 000 € à un taux nominal de 5 % et que l'inflation est de 2 %, quel est son taux d'intérêt réel ?", choices: ["3 %", "5 %", "7 %", "2 %"], correct: 0 },
+        { question: "Quelle est la formule du WACC (coût moyen pondéré du capital) ?", choices: ["(coût des fonds propres * fonds propres + coût de la dette * dettes) / capital total", "Dividendes + dettes / actifs totaux", "Actifs - dettes / fonds propres", "Coût des capitaux propres + rendements des investissements"], correct: 0 },
+        { question: "Exemple : Dorian doit calculer le WACC d'une entreprise avec 50 % de fonds propres et 50 % de dettes, avec un coût des fonds propres de 8 % et un coût de la dette de 4 %. Quel est le WACC ?", choices: ["6 %", "8 %", "4 %", "5 %"], correct: 0 },
+        { question: "Qu'est-ce que le Beta d'une action mesure ?", choices: ["Le rendement moyen d'une action", "La volatilité d'une action par rapport au marché", "La rentabilité de l'entreprise", "La capacité de l'entreprise à rembourser ses dettes"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
